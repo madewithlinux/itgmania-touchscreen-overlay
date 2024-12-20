@@ -1,5 +1,19 @@
+import re
 import subprocess
 from tkinter import *
+
+
+def get_itgmania_position():
+    out = subprocess.check_output(
+        ["xdotool", "search", "--name", "Simply Love", "getwindowgeometry"]
+    ).decode("ascii", "ignore")
+    m = re.search("\s*Position: (\d+),(\d+)", out)
+    if not m:
+        return (0,0) # default to top-left corner of screen
+    return (
+        int(m.group(1)),
+        int(m.group(2))
+    )
 
 
 def ensure_itgmania_active():
@@ -14,19 +28,27 @@ def send_key_to_itgmania(key: str):
         ["xdotool", "search", "--name", "Simply Love", "key", "--window", "%1", key]
     )
 
+itgmania_status_bar_height = 71
 
 root = Tk()
-
 root.title("overlay")
 
-x = "0"
-y = "0"
+# x = "0"
+# y = "0"
+print(f"{get_itgmania_position()=}")
 
-root.geometry(f"250x150+{x}+{y}")
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-print(f"{screen_width=}")
-print(f"{screen_height=}")
+# TODO: this doesn't work quite right due to the window decoration
+# x, y = get_itgmania_position()
+
+# hardcoded offset for desktop development
+x = 6
+y = 93
+
+root.geometry(f"=250x150+{x}+{y}")
+# screen_width = root.winfo_screenwidth()
+# screen_height = root.winfo_screenheight()
+# print(f"{screen_width=}")
+# print(f"{screen_height=}")
 
 # to remove the titlebar
 root.overrideredirect(True)
@@ -57,4 +79,6 @@ b.pack()
 ensure_itgmania_active()
 # make window to be always on top
 root.wm_attributes("-topmost", 1)
+# quit on control-C
+root.bind('<Control-c>', exit)
 root.mainloop()

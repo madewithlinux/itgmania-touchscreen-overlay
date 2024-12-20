@@ -1,6 +1,13 @@
 # notes.md
 
 
+# sizes of UI elements in itgmania
+at 1080p
+top/bottom bar: 71 pixels tall I think
+top-left corner of itgmania window vs top-left corner of desktop monitor: 93 pixels down, 6 pixels right
+
+
+
 # tkinter
 https://github.com/lecrowpus/overlay
 
@@ -12,6 +19,7 @@ https://github.com/jordansissel/xdotool
 xdotool search --name 'Simply Love'
 xdotool search --name 'Simply Love' windowactivate
 xdotool search --name 'Simply Love' key --window '%1' Return
+xdotool search --name 'Simply Love' getwindowgeometry
 ```
 
 note that the version of xdotool installed here does not have as many features as the latest upstream version
