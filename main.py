@@ -2,18 +2,16 @@ import subprocess
 from tkinter import *
 
 
-def send_key(key: str):
+def ensure_itgmania_active():
     subprocess.check_output(
-        [
-            "xdotool",
-            "search",
-            "--name",
-            "Simply Love",
-            "key",
-            "--window",
-            "%1",
-            key,
-        ]
+        ["xdotool", "search", "--name", "Simply Love", "windowactivate"]
+    )
+
+
+def send_key_to_itgmania(key: str):
+    ensure_itgmania_active()
+    subprocess.check_output(
+        ["xdotool", "search", "--name", "Simply Love", "key", "--window", "%1", key]
     )
 
 
@@ -47,13 +45,16 @@ b = Button(
 )
 b.pack()
 
-b = Button(root, text="P1 Start", command=lambda: send_key("Return"))
+b = Button(root, text="P1 Start", command=lambda: send_key_to_itgmania("Return"))
+b.pack()
+
+b = Button(root, text="P1 Back", command=lambda: send_key_to_itgmania("Escape"))
 b.pack()
 
 b = Button(root, text="quit", command=lambda: exit())
 b.pack()
 
-
+ensure_itgmania_active()
 # make window to be always on top
 root.wm_attributes("-topmost", 1)
 root.mainloop()
