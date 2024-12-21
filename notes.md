@@ -1,5 +1,17 @@
 # notes.md
 
+# feature TODOs
+- [x] sending keys to itgmania
+- [x] making sure itgmania is always the active window
+- [x] reliable button positioning
+- [x] both P1 and P2 buttons
+- [x] button holding
+- [ ] dedicated keys just like ITG wheel remote (menu, close folder, profile switch, favorite, etc)
+- [ ] hide during gameplay (use the simply-love module)
+  - [ ] maybe also add a restart button for during gameplay?
+- [ ] add to ITG machine and make it auto start
+- [ ] upload to github
+
 
 # sizes of UI elements in itgmania
 at 1080p
