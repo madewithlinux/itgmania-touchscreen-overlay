@@ -7,12 +7,12 @@
 - [x] both P1 and P2 buttons
 - [x] button holding
 - [x] dedicated keys just like ITG wheel remote (menu, close folder, profile switch, favorite, etc)
+- [x] upload to github
 - [ ] favorite button
 - [ ] hide during gameplay (use the simply-love module)
   - [ ] maybe also add a restart button for during gameplay?
 - [ ] maybe hide mouse cursor?
 - [ ] add to ITG machine and make it auto start
-- [ ] upload to github
 
 
 # sizes of UI elements in itgmania
