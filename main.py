@@ -6,6 +6,7 @@ import subprocess
 import tkinter as tk
 from tkinter import *
 
+use_game_buttons = False
 window_position_x = "0"
 window_position_y = "0"
 # hardcoded offset for desktop development
@@ -41,22 +42,28 @@ def send_key_to_itgmania(key: str):
     )
 
 
-def send_keydown_to_itgmania(key: str):
+def send_keydown_to_itgmania(key: Union[str, Tuple[str]]):
     ensure_itgmania_active()
+    if isinstance(key, str):
+        key = (key,)
     subprocess.check_output(
-        ["xdotool", "search", "--name", "Simply Love", "keydown", "--window", "%1", key]
+        ["xdotool", "search", "--name", "Simply Love", "keydown", "--window", "%1"]
+        + list(key)
     )
 
 
-def send_keyup_to_itgmania(key: str):
+def send_keyup_to_itgmania(key: Union[str, Tuple[str]]):
     ensure_itgmania_active()
+    if isinstance(key, str):
+        key = (key,)
     subprocess.check_output(
-        ["xdotool", "search", "--name", "Simply Love", "keyup", "--window", "%1", key]
+        ["xdotool", "search", "--name", "Simply Love", "keyup", "--window", "%1"]
+        + list(key)
     )
 
 
 root = Tk()
-root.title("overlay")
+root.title("touchscreen overlay")
 root.geometry(f"=250x150+{window_position_x}+{window_position_y}")
 # root.geometry(f"=40x40+{window_position_x}+{window_position_y}")
 # # to remove the titlebar
@@ -74,8 +81,7 @@ b.pack()
 @dataclasses.dataclass
 class UiButton:
     text: str
-    key_to_send: Optional[str]
-    # command: Callable
+    key_to_send: Optional[Union[str, Tuple[str]]]
     bg: Optional[str]
 
     def on_press(self, event):
@@ -87,24 +93,77 @@ class UiButton:
         send_keyup_to_itgmania(self.key_to_send)
 
 
-nav_buttons_p1 = [
-    UiButton(text="Left", key_to_send="Left", bg="#ff0000"),
-    UiButton(text="Right", key_to_send="Right", bg="#ffff00"),
-    UiButton(text="Up", key_to_send="Up", bg="#00ff00"),
-    UiButton(text="Down", key_to_send="Down", bg="deep sky blue"),
-    UiButton(text="Start", key_to_send="Return", bg="green3"),
-    UiButton(text="Select", key_to_send="slash", bg="red"),
-    UiButton(text="Back", key_to_send="Escape", bg="gray69"),
-]
+if use_game_buttons:
+    # game buttons
+    nav_buttons_p1 = [
+        UiButton(text="Left", key_to_send="Left", bg="#ff0000"),
+        UiButton(text="Right", key_to_send="Right", bg="#ffff00"),
+        UiButton(text="Up", key_to_send="Up", bg="#00ff00"),
+        UiButton(text="Down", key_to_send="Down", bg="deep sky blue"),
+        UiButton(text="Start", key_to_send="Return", bg="green3"),
+        UiButton(text="Select", key_to_send="slash", bg="red"),
+        UiButton(text="Back", key_to_send="Escape", bg="gray69"),
+    ]
+    nav_buttons_p2 = [
+        UiButton(text="Left", key_to_send="KP_4", bg="#ff0000"),
+        UiButton(text="Right", key_to_send="KP_6", bg="#ffff00"),
+        UiButton(text="Up", key_to_send="KP_8", bg="#00ff00"),
+        UiButton(text="Down", key_to_send="KP_2", bg="deep sky blue"),
+        UiButton(text="Start", key_to_send="KP_Enter", bg="green3"),
+        UiButton(text="Select", key_to_send="KP_0", bg="red"),
+        UiButton(text="Back", key_to_send="backslash", bg="gray69"),
+    ]
+else:
+    # menu buttons
+    nav_buttons_p1 = [
+        UiButton(text="Left", key_to_send="Delete", bg="#ff0000"),
+        UiButton(text="Right", key_to_send="Page_Down", bg="#ffff00"),
+        UiButton(text="Up", key_to_send="Home", bg="#00ff00"),
+        UiButton(text="Down", key_to_send="End", bg="deep sky blue"),
+        UiButton(text="Start", key_to_send="Return", bg="green3"),
+        UiButton(text="Select", key_to_send="slash", bg="red"),
+        UiButton(text="Back", key_to_send="Escape", bg="gray69"),
+    ]
+    nav_buttons_p2 = [
+        UiButton(text="Left", key_to_send="KP_Divide", bg="#ff0000"),
+        UiButton(text="Right", key_to_send="KP_Multiply", bg="#ffff00"),
+        UiButton(text="Up", key_to_send="KP_Minus", bg="#00ff00"),
+        UiButton(text="Down", key_to_send="KP_Add", bg="deep sky blue"),
+        UiButton(text="Start", key_to_send="KP_Enter", bg="green3"),
+        UiButton(text="Select", key_to_send="KP_0", bg="red"),
+        UiButton(text="Back", key_to_send="backslash", bg="gray69"),
+    ]
 
-nav_buttons_p2 = [
-    UiButton(text="Left", key_to_send="KP_4", bg="#ff0000"),
-    UiButton(text="Right", key_to_send="KP_6", bg="#ffff00"),
-    UiButton(text="Up", key_to_send="KP_8", bg="#00ff00"),
-    UiButton(text="Down", key_to_send="KP_2", bg="deep sky blue"),
-    UiButton(text="Start", key_to_send="KP_Enter", bg="green3"),
-    UiButton(text="Select", key_to_send="KP_0", bg="red"),
-    UiButton(text="Back", key_to_send="backslash", bg="gray69"),
+nav_buttons_middle = [
+    UiButton(
+        text="Close",
+        key_to_send=(
+            "Up",
+            "Down",
+            "Home",
+            "End",
+            "KP_Minus",
+            "KP_Add",
+            "KP_8",
+            "KP_2",
+        ),
+        bg="gray69",
+    ),
+    UiButton(
+        text="Menu",
+        key_to_send=(
+            "Left",
+            "Right",
+            "Delete",
+            "Page_Down",
+            "KP_Divide",
+            "KP_Multiply",
+            "KP_4",
+            "KP_6",
+        ),
+        bg="gray69",
+    ),
+    UiButton(text="Profile", key_to_send="p", bg="gray69"),
 ]
 
 
@@ -138,8 +197,6 @@ def create_child_window(
             # command=btn.command,
             bg=btn.bg,
         )
-        # b.bind("<ButtonPress>", lambda event: send_keydown_to_itgmania(btn.key_to_send))
-        # b.bind("<ButtonRelease>", lambda event: send_keyup_to_itgmania(btn.key_to_send))
         b.bind("<ButtonPress>", btn.on_press)
         b.bind("<ButtonRelease>", btn.on_release)
         b.place(x=i * unit, y=0, width=unit, height=unit)
@@ -147,6 +204,7 @@ def create_child_window(
 
 create_child_window(root, nav_buttons=nav_buttons_p1, x_midpoint=window_width / 4)
 create_child_window(root, nav_buttons=nav_buttons_p2, x_midpoint=3 * window_width / 4)
+create_child_window(root, nav_buttons=nav_buttons_middle, x_midpoint=window_width / 2)
 ensure_itgmania_active()
 
 

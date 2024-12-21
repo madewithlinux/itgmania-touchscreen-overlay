@@ -6,9 +6,11 @@
 - [x] reliable button positioning
 - [x] both P1 and P2 buttons
 - [x] button holding
-- [ ] dedicated keys just like ITG wheel remote (menu, close folder, profile switch, favorite, etc)
+- [x] dedicated keys just like ITG wheel remote (menu, close folder, profile switch, favorite, etc)
+- [ ] favorite button
 - [ ] hide during gameplay (use the simply-love module)
   - [ ] maybe also add a restart button for during gameplay?
+- [ ] maybe hide mouse cursor?
 - [ ] add to ITG machine and make it auto start
 - [ ] upload to github
 
@@ -32,6 +34,12 @@ xdotool search --name 'Simply Love'
 xdotool search --name 'Simply Love' windowactivate
 xdotool search --name 'Simply Love' key --window '%1' Return
 xdotool search --name 'Simply Love' getwindowgeometry
+
+xdotool search --name 'Simply Love' keydown Left
+xdotool search --name 'Simply Love' keyup Left
+xdotool search --name 'Simply Love' keydown Left Right
+xdotool search --name 'Simply Love' keyup Left Right
+
 ```
 
 note that the version of xdotool installed here does not have as many features as the latest upstream version
