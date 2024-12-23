@@ -23,12 +23,14 @@ top-left corner of itgmania window vs top-left corner of desktop monitor: 93 pix
 
 
 # tkinter
+https://docs.python.org/3/library/tkinter.html#tkinter.Tk
 https://github.com/lecrowpus/overlay
-
+https://cs111.wellesley.edu/archive/cs111_fall14/public_html/labs/lab12/tkintercolor.html
 
 
 # xdotool
 https://github.com/jordansissel/xdotool
+https://www.cl.cam.ac.uk/~mgk25/ucs/keysymdef.h
 ```bash
 xdotool search --name 'Simply Love'
 xdotool search --name 'Simply Love' windowactivate
