@@ -4,6 +4,7 @@ from time import sleep
 import re
 import subprocess
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import *
 
 use_game_buttons = False
@@ -90,6 +91,7 @@ b.pack()
 
 
 arrow_font = ("Courier", "48")
+text_btn_font = ("Helvetica", "18")
 label_arrows = Label(
     root,
     text="""_
@@ -121,77 +123,114 @@ label_arrows = Label(
 )
 label_arrows.pack()
 
+style = ttk.Style()
+left_btn_style = "Left.TButton"
+right_btn_style = "Right.TButton"
+up_btn_style = "Up.TButton"
+down_btn_style = "Down.TButton"
+start_btn_style = "Start.TButton"
+select_btn_style = "Select.TButton"
+back_btn_style = "Back.TButton"
+close_btn_style = "Close.TButton"
+menu_btn_style = "Menu.TButton"
+profile_btn_style = "Profile.TButton"
+
+
+btn_style_params = [
+    # fmt: off
+(left_btn_style,    "Button.leftarrow",  arrow_font,    "#ff0000"       ),
+(right_btn_style,   "Button.rightarrow", arrow_font,    "#ffff00"       ),
+(up_btn_style,      "Button.uparrow",    arrow_font,    "#00ff00"       ),
+(down_btn_style,    "Button.downarrow",  arrow_font,    "deep sky blue" ),
+(start_btn_style,   None,                text_btn_font, "green3"        ),
+(select_btn_style,  None,                text_btn_font, "red"           ),
+(back_btn_style,    None,                text_btn_font, "gray80"        ),
+(close_btn_style,   None,                text_btn_font, "gray69"        ),
+(menu_btn_style,    None,                text_btn_font, "light salmon"  ),
+(profile_btn_style, None,                text_btn_font, "MediumPurple1" ),
+    # fmt: on
+]
+for btn_style, arrow, font, color in btn_style_params:
+    if arrow:
+        style.layout(btn_style, [("Button.focus", {"children": [(arrow, None)]})])
+    style.configure(btn_style, font=font, arrowsize="40", background=color)
+    style.map(btn_style, background=[("active", color)])
+
+default_btn_style = "Default2.TButton"
+style.configure(default_btn_style, font=text_btn_font, background="gray80")
+style.map(default_btn_style, background=[("active", "gray80")])
+
 
 @dataclasses.dataclass
 class UiButton:
     text: str
-    key_to_send: Optional[Union[str, Tuple[str]]]
-    bg: Optional[str]
+    key: Optional[Union[str, Tuple[str]]]
+    bg: Optional[str] = None
     font: Optional[str] = None
-    style: str = 'Default.TButton'
+    style: str = default_btn_style
 
     def on_press(self, event):
-        print(f"button {self.text} {self.key_to_send} was pressed")
-        send_keydown_to_itgmania(self.key_to_send)
+        print(f"button {self.text} {self.key} was pressed")
+        send_keydown_to_itgmania(self.key)
 
     def on_release(self, event):
-        print(f"button {self.text} {self.key_to_send} was released")
-        send_keyup_to_itgmania(self.key_to_send)
+        print(f"button {self.text} {self.key} was released")
+        send_keyup_to_itgmania(self.key)
 
 
 if use_game_buttons:
     # game buttons
     nav_buttons_p1 = [
         # fmt: off
-        UiButton(text="Left",   key_to_send="Left",      bg="#ff0000"),
-        UiButton(text="Right",  key_to_send="Right",     bg="#ffff00"),
-        UiButton(text="Up",     key_to_send="Up",        bg="#00ff00"),
-        UiButton(text="Down",   key_to_send="Down",      bg="deep sky blue"),
-        UiButton(text="Start",  key_to_send="Return",    bg="green3"),
-        UiButton(text="Select", key_to_send="slash",     bg="red"),
-        UiButton(text="Back",   key_to_send="Escape",    bg="gray69"),
+        UiButton(text="Left",   key="Left",      bg="#ff0000"),
+        UiButton(text="Right",  key="Right",     bg="#ffff00"),
+        UiButton(text="Up",     key="Up",        bg="#00ff00"),
+        UiButton(text="Down",   key="Down",      bg="deep sky blue"),
+        UiButton(text="Start",  key="Return",    bg="green3"),
+        UiButton(text="Select", key="slash",     bg="red"),
+        UiButton(text="Back",   key="Escape",    bg="gray69"),
         # fmt: on
     ]
     nav_buttons_p2 = [
         # fmt: off
-        UiButton(text="Left",   key_to_send="KP_4",      bg="#ff0000"),
-        UiButton(text="Right",  key_to_send="KP_6",      bg="#ffff00"),
-        UiButton(text="Up",     key_to_send="KP_8",      bg="#00ff00"),
-        UiButton(text="Down",   key_to_send="KP_2",      bg="deep sky blue"),
-        UiButton(text="Start",  key_to_send="KP_Enter",  bg="green3"),
-        UiButton(text="Select", key_to_send="KP_0",      bg="red"),
-        UiButton(text="Back",   key_to_send="backslash", bg="gray69"),
+        UiButton(text="Left",   key="KP_4",      bg="#ff0000"),
+        UiButton(text="Right",  key="KP_6",      bg="#ffff00"),
+        UiButton(text="Up",     key="KP_8",      bg="#00ff00"),
+        UiButton(text="Down",   key="KP_2",      bg="deep sky blue"),
+        UiButton(text="Start",  key="KP_Enter",  bg="green3"),
+        UiButton(text="Select", key="KP_0",      bg="red"),
+        UiButton(text="Back",   key="backslash", bg="gray69"),
         # fmt: on
     ]
 else:
     # menu buttons
     nav_buttons_p1 = [
         # fmt: off
-        UiButton(text="🡄", font=arrow_font, key_to_send="Delete",      bg="#ff0000"),
-        UiButton(text="🡆", font=arrow_font, key_to_send="Page_Down",   bg="#ffff00"),
-        UiButton(text="🡅", font=arrow_font, key_to_send="Home",        bg="#00ff00"),
-        UiButton(text="🡇", font=arrow_font, key_to_send="End",         bg="deep sky blue"),
-        UiButton(text="Start",              key_to_send="Return",      bg="green3"),
-        UiButton(text="Select",             key_to_send="slash",       bg="red"),
-        UiButton(text="Back",               key_to_send="Escape",      bg="gray69"),
+        UiButton(text="",       style=left_btn_style,   key="Delete",    ),
+        UiButton(text="",       style=right_btn_style,  key="Page_Down", ),
+        UiButton(text="",       style=up_btn_style,     key="Home",      ),
+        UiButton(text="",       style=down_btn_style,   key="End",       ),
+        UiButton(text="Start",  style=start_btn_style,  key="Return",    ),
+        UiButton(text="Select", style=select_btn_style, key="slash",     ),
+        UiButton(text="Back",   style=back_btn_style,   key="Escape",    ),
         # fmt: on
     ]
     nav_buttons_p2 = [
         # fmt: off
-        UiButton(text="◀", font=arrow_font, key_to_send="KP_Divide",   bg="#ff0000"),
-        UiButton(text="▶", font=arrow_font, key_to_send="KP_Multiply", bg="#ffff00"),
-        UiButton(text="▲", font=arrow_font, key_to_send="KP_Minus",    bg="#00ff00"),
-        UiButton(text="▼", font=arrow_font, key_to_send="KP_Add",      bg="deep sky blue"),
+        UiButton(text="",       style=left_btn_style,   key="KP_Divide",   ),
+        UiButton(text="",       style=right_btn_style,  key="KP_Multiply", ),
+        UiButton(text="",       style=up_btn_style,     key="KP_Minus",    ),
+        UiButton(text="",       style=down_btn_style,   key="KP_Add",      ),
+        UiButton(text="Start",  style=start_btn_style,  key="KP_Enter",    ),
+        UiButton(text="Select", style=select_btn_style, key="KP_0",        ),
+        UiButton(text="Back",   style=back_btn_style,   key="backslash",   ),
         # fmt: on
-        UiButton(text="Start",              key_to_send="KP_Enter",    bg="green3"),
-        UiButton(text="Select",             key_to_send="KP_0",        bg="red"),
-        UiButton(text="Back",               key_to_send="backslash",   bg="gray69"),
     ]
 
 nav_buttons_middle = [
     UiButton(
         text="Close\nFolder",
-        key_to_send=(
+        key=(
             # fmt: off
             "Up", "Down",
             "Home", "End",
@@ -199,11 +238,11 @@ nav_buttons_middle = [
             "KP_8", "KP_2",
             # fmt: on
         ),
-        bg="gray69",
+        style=close_btn_style,
     ),
     UiButton(
         text="Menu",
-        key_to_send=(
+        key=(
             # fmt: off
             "Left", "Right",
             "Delete", "Page_Down",
@@ -211,9 +250,9 @@ nav_buttons_middle = [
             "KP_4", "KP_6",
             # fmt: on
         ),
-        bg="gray69",
+        style=menu_btn_style,
     ),
-    UiButton(text="Profile", key_to_send="p", bg="gray69"),
+    UiButton(text="Profile", key="p", style=profile_btn_style),
 ]
 
 
@@ -237,26 +276,10 @@ def create_child_window(
     child.geometry(f"={width}x{height}+{x}+{y}")
     child.overrideredirect(True)
 
-    # import tkinter.ttk as ttk
-    # style = ttk.Style()
-    # style.layout('Left.TButton', [ ('Button.focus', {'children': [ ('Button.leftarrow', None) ] } ) ] )
-    # style.configure('Left.TButton', font=('','60'), arrowcolor='green', arrowsize='40')
-
     for i, btn in enumerate(nav_buttons):
         if not btn:
             continue
-        b = tk.Button(
-            child,
-            font=btn.font or ("Helvetica", "18"),
-            text=btn.text,
-            bg=btn.bg,
-            activebackground=btn.bg,
-            background=btn.bg,
-            justify="center",
-            anchor="center",
-            # # style='Left.TButton',
-            # style=btn.style,
-        )
+        b = ttk.Button(child, text=btn.text, style=btn.style)
         b.bind("<ButtonPress>", btn.on_press)
         b.bind("<ButtonRelease>", btn.on_release)
         b.place(x=i * unit, y=0, width=unit, height=unit)
