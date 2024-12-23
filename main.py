@@ -8,6 +8,7 @@ import tkinter.ttk as ttk
 from tkinter import *
 
 use_game_buttons = False
+# use_game_buttons = True
 window_position_x = "0"
 window_position_y = "0"
 # hardcoded offset for desktop development
@@ -178,54 +179,64 @@ class UiButton:
         send_keyup_to_itgmania(self.key)
 
 
+# fmt: off
 if use_game_buttons:
-    # game buttons
-    nav_buttons_p1 = [
-        # fmt: off
-        UiButton(text="Left",   key="Left",      bg="#ff0000"),
-        UiButton(text="Right",  key="Right",     bg="#ffff00"),
-        UiButton(text="Up",     key="Up",        bg="#00ff00"),
-        UiButton(text="Down",   key="Down",      bg="deep sky blue"),
-        UiButton(text="Start",  key="Return",    bg="green3"),
-        UiButton(text="Select", key="slash",     bg="red"),
-        UiButton(text="Back",   key="Escape",    bg="gray69"),
-        # fmt: on
-    ]
-    nav_buttons_p2 = [
-        # fmt: off
-        UiButton(text="Left",   key="KP_4",      bg="#ff0000"),
-        UiButton(text="Right",  key="KP_6",      bg="#ffff00"),
-        UiButton(text="Up",     key="KP_8",      bg="#00ff00"),
-        UiButton(text="Down",   key="KP_2",      bg="deep sky blue"),
-        UiButton(text="Start",  key="KP_Enter",  bg="green3"),
-        UiButton(text="Select", key="KP_0",      bg="red"),
-        UiButton(text="Back",   key="backslash", bg="gray69"),
-        # fmt: on
-    ]
+    p1_left   = "Left"
+    p1_right  = "Right"
+    p1_up     = "Up"
+    p1_down   = "Down"
+    p1_start  = "Return"
+    p1_select = "slash"
+    p1_back   = "Escape"
+
+    p2_left   = "KP_4"
+    p2_right  = "KP_6"
+    p2_up     = "KP_8"
+    p2_down   = "KP_2"
+    p2_start  = "KP_Enter"
+    p2_select = "KP_0"
+    p2_back   = "backslash"
 else:
-    # menu buttons
-    nav_buttons_p1 = [
-        # fmt: off
-        UiButton(text="",       style=left_btn_style,   key="Delete",    ),
-        UiButton(text="",       style=right_btn_style,  key="Page_Down", ),
-        UiButton(text="",       style=up_btn_style,     key="Home",      ),
-        UiButton(text="",       style=down_btn_style,   key="End",       ),
-        UiButton(text="Start",  style=start_btn_style,  key="Return",    ),
-        UiButton(text="Select", style=select_btn_style, key="slash",     ),
-        UiButton(text="Back",   style=back_btn_style,   key="Escape",    ),
-        # fmt: on
-    ]
-    nav_buttons_p2 = [
-        # fmt: off
-        UiButton(text="",       style=left_btn_style,   key="KP_Divide",   ),
-        UiButton(text="",       style=right_btn_style,  key="KP_Multiply", ),
-        UiButton(text="",       style=up_btn_style,     key="KP_Minus",    ),
-        UiButton(text="",       style=down_btn_style,   key="KP_Add",      ),
-        UiButton(text="Start",  style=start_btn_style,  key="KP_Enter",    ),
-        UiButton(text="Select", style=select_btn_style, key="KP_0",        ),
-        UiButton(text="Back",   style=back_btn_style,   key="backslash",   ),
-        # fmt: on
-    ]
+    p1_left   = "Delete"
+    p1_right  = "Page_Down"
+    p1_up     = "Home"
+    p1_down   = "End"
+    p1_start  = "Return"
+    p1_select = "slash"
+    p1_back   = "Escape"
+
+    p2_left   = "KP_Divide"
+    p2_right  = "KP_Multiply"
+    p2_up     = "KP_Minus"
+    p2_down   = "KP_Add"
+    p2_start  = "KP_Enter"
+    p2_select = "KP_0"
+    p2_back   = "backslash"
+# fmt: on
+
+# menu buttons
+nav_buttons_p1 = [
+    # fmt: off
+    UiButton(text="",       style=left_btn_style,   key=p1_left,   ),
+    UiButton(text="",       style=right_btn_style,  key=p1_right,  ),
+    UiButton(text="",       style=down_btn_style,   key=p1_down,   ),
+    UiButton(text="",       style=up_btn_style,     key=p1_up,     ),
+    UiButton(text="Start",  style=start_btn_style,  key=p1_start,  ),
+    UiButton(text="Select", style=select_btn_style, key=p1_select, ),
+    UiButton(text="Back",   style=back_btn_style,   key=p1_back,   ),
+    # fmt: on
+]
+nav_buttons_p2 = [
+    # fmt: off
+    UiButton(text="Back",   style=back_btn_style,   key=p2_back,   ),
+    UiButton(text="Select", style=select_btn_style, key=p2_select, ),
+    UiButton(text="Start",  style=start_btn_style,  key=p2_start,  ),
+    UiButton(text="",       style=down_btn_style,   key=p2_down,   ),
+    UiButton(text="",       style=up_btn_style,     key=p2_up,     ),
+    UiButton(text="",       style=left_btn_style,   key=p2_left,   ),
+    UiButton(text="",       style=right_btn_style,  key=p2_right,  ),
+    # fmt: on
+]
 
 nav_buttons_middle = [
     UiButton(
@@ -285,8 +296,15 @@ def create_child_window(
         b.place(x=i * unit, y=0, width=unit, height=unit)
 
 
-create_child_window(root, nav_buttons=nav_buttons_p1, x_midpoint=window_width / 4)
-create_child_window(root, nav_buttons=nav_buttons_p2, x_midpoint=3 * window_width / 4)
+player_nav_buttons_width = len(nav_buttons_p1) * itgmania_status_bar_height
+create_child_window(
+    root, nav_buttons=nav_buttons_p1, x_midpoint=player_nav_buttons_width / 2
+)
+create_child_window(
+    root,
+    nav_buttons=nav_buttons_p2,
+    x_midpoint=window_width - player_nav_buttons_width / 2,
+)
 create_child_window(root, nav_buttons=nav_buttons_middle, x_midpoint=window_width / 2)
 ensure_itgmania_active(fail_ok=True)
 
