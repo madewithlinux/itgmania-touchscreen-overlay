@@ -8,11 +8,15 @@
 - [x] button holding
 - [x] dedicated keys just like ITG wheel remote (menu, close folder, profile switch, favorite, etc)
 - [x] upload to github
-- [ ] favorite button
-- [ ] hide during gameplay (use the simply-love module)
+- [x] hide during gameplay (use the simply-love module)
   - [ ] maybe also add a restart button for during gameplay?
+- [ ] favorite button
 - [ ] maybe hide mouse cursor?
 - [ ] add to ITG machine and make it auto start
+
+
+# itgmania Simply-Love ScreenSwitcher.lua module
+https://github.com/Simply-Love/Simply-Love-Modules/blob/main/ScreenSwitcher.lua
 
 
 # sizes of UI elements in itgmania

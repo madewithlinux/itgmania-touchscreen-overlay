@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import *
 import dataclasses
 from time import sleep
@@ -6,6 +7,22 @@ import subprocess
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import *
+
+# for use with itgmania Simply-Love ScreenSwitcher.lua module
+# https://github.com/Simply-Love/Simply-Love-Modules/blob/main/ScreenSwitcher.lua
+
+
+def get_current_screen():
+    current_screen_paths = [
+        "~/.itgmania/Save/CurrentScreen.txt",
+        "~/Apps/itgmania/Save/CurrentScreen.txt",
+    ]
+    for sp in current_screen_paths:
+        p = Path(sp).expanduser()
+        if p.exists():
+            break
+    return p.read_text().strip()
+
 
 use_game_buttons = False
 # use_game_buttons = True
@@ -276,7 +293,7 @@ def create_child_window(
     child = tk.Toplevel(root)
     child.transient(root)
     child.title("child")
-    # make window to be always on top
+    # make window always on top
     child.wm_attributes("-topmost", 1)
     unit = itgmania_status_bar_height
     width = unit * len(nav_buttons)
@@ -295,22 +312,52 @@ def create_child_window(
         b.bind("<ButtonRelease>", btn.on_release)
         b.place(x=i * unit, y=0, width=unit, height=unit)
 
+    return child
 
-player_nav_buttons_width = len(nav_buttons_p1) * itgmania_status_bar_height
-create_child_window(
-    root, nav_buttons=nav_buttons_p1, x_midpoint=player_nav_buttons_width / 2
-)
-create_child_window(
-    root,
-    nav_buttons=nav_buttons_p2,
-    x_midpoint=window_width - player_nav_buttons_width / 2,
-)
-create_child_window(root, nav_buttons=nav_buttons_middle, x_midpoint=window_width / 2)
-ensure_itgmania_active(fail_ok=True)
+
+def create_nav_windows() -> List[tk.Toplevel]:
+    player_nav_buttons_width = len(nav_buttons_p1) * itgmania_status_bar_height
+    p1 = create_child_window(
+        root, nav_buttons=nav_buttons_p1, x_midpoint=player_nav_buttons_width / 2
+    )
+    p2 = create_child_window(
+        root,
+        nav_buttons=nav_buttons_p2,
+        x_midpoint=window_width - player_nav_buttons_width / 2,
+    )
+    middle = create_child_window(
+        root, nav_buttons=nav_buttons_middle, x_midpoint=window_width / 2
+    )
+    ensure_itgmania_active(fail_ok=True)
+    return [p1, p2, middle]
+
+
+nav_windows: List[tk.Toplevel] = create_nav_windows()
+nav_window_check_interval_ms = 500
+last_screen = ""
+
+
+def show_or_hide_nav_windows():
+    global nav_windows
+    global last_screen
+    current_screen = get_current_screen()
+    # print(f"{current_screen=}")
+    if last_screen != current_screen:
+        # print("screen changed")
+        last_screen = current_screen
+        if get_current_screen() == "ScreenGameplay":
+            for w in nav_windows:
+                w.withdraw()
+        else:
+            for w in nav_windows:
+                w.deiconify()
+        ensure_itgmania_active()
+    root.after(nav_window_check_interval_ms, show_or_hide_nav_windows)
 
 
 # quit on control-C
 # TODO: this doesn't actually work?
 root.bind("<Control-c>", exit)
 root.after(250, ensure_itgmania_active)
+root.after(nav_window_check_interval_ms, show_or_hide_nav_windows)
 root.mainloop()
