@@ -235,10 +235,10 @@ else:
 # menu buttons
 nav_buttons_p1 = [
     # fmt: off
-    UiButton(text="",       style=left_btn_style,   key=p1_left,   ),
     UiButton(text="",       style=right_btn_style,  key=p1_right,  ),
-    UiButton(text="",       style=down_btn_style,   key=p1_down,   ),
+    UiButton(text="",       style=left_btn_style,   key=p1_left,   ),
     UiButton(text="",       style=up_btn_style,     key=p1_up,     ),
+    UiButton(text="",       style=down_btn_style,   key=p1_down,   ),
     UiButton(text="Start",  style=start_btn_style,  key=p1_start,  ),
     UiButton(text="Select", style=select_btn_style, key=p1_select, ),
     UiButton(text="Back",   style=back_btn_style,   key=p1_back,   ),
@@ -246,13 +246,13 @@ nav_buttons_p1 = [
 ]
 nav_buttons_p2 = [
     # fmt: off
-    UiButton(text="Back",   style=back_btn_style,   key=p2_back,   ),
-    UiButton(text="Select", style=select_btn_style, key=p2_select, ),
-    UiButton(text="Start",  style=start_btn_style,  key=p2_start,  ),
-    UiButton(text="",       style=down_btn_style,   key=p2_down,   ),
-    UiButton(text="",       style=up_btn_style,     key=p2_up,     ),
-    UiButton(text="",       style=left_btn_style,   key=p2_left,   ),
     UiButton(text="",       style=right_btn_style,  key=p2_right,  ),
+    UiButton(text="",       style=left_btn_style,   key=p2_left,   ),
+    UiButton(text="",       style=up_btn_style,     key=p2_up,     ),
+    UiButton(text="",       style=down_btn_style,   key=p2_down,   ),
+    UiButton(text="Start",  style=start_btn_style,  key=p2_start,  ),
+    UiButton(text="Select", style=select_btn_style, key=p2_select, ),
+    UiButton(text="Back",   style=back_btn_style,   key=p2_back,   ),
     # fmt: on
 ]
 
@@ -288,20 +288,28 @@ nav_buttons_middle = [
 def create_child_window(
     root,
     nav_buttons: List[UiButton],
+    child_x: int,
+    child_y: int,
     *,
-    x_midpoint=window_width / 4,
+    # x_midpoint=window_width / 4,
+    direction: Literal["v", "h"] = "h",
+    unit=itgmania_status_bar_height,
 ):
     child = tk.Toplevel(root)
     child.transient(root)
     child.title("child")
     # make window always on top
     child.wm_attributes("-topmost", 1)
-    unit = itgmania_status_bar_height
-    width = unit * len(nav_buttons)
-    height = unit
-    # x = window_position_x + x_offset
-    x = window_position_x + int(x_midpoint - (unit * len(nav_buttons) / 2))
-    y = window_position_y + window_height - unit
+    if direction == "h":
+        width = unit * len(nav_buttons)
+        height = unit
+    else:
+        height = unit * len(nav_buttons)
+        width = unit
+
+    # make sure they are integers (in case division was uneven)
+    x = window_position_x + int(child_x)
+    y = window_position_y + int(child_y)
     child.geometry(f"={width}x{height}+{x}+{y}")
     child.overrideredirect(True)
 
@@ -311,23 +319,40 @@ def create_child_window(
         b = ttk.Button(child, text=btn.text, style=btn.style)
         b.bind("<ButtonPress>", btn.on_press)
         b.bind("<ButtonRelease>", btn.on_release)
-        b.place(x=i * unit, y=0, width=unit, height=unit)
+        if direction == "h":
+            b.place(x=i * unit, y=0, width=unit, height=unit)
+        else:
+            b.place(x=0, y=i * unit, width=unit, height=unit)
 
     return child
 
 
 def create_nav_windows() -> List[tk.Toplevel]:
-    player_nav_buttons_width = len(nav_buttons_p1) * itgmania_status_bar_height
+    unit = itgmania_status_bar_height
+    player_nav_buttons_width = len(nav_buttons_p1) * unit
     p1 = create_child_window(
-        root, nav_buttons=nav_buttons_p1, x_midpoint=player_nav_buttons_width / 2
+        root,
+        nav_buttons=nav_buttons_p1,
+        child_x=0,
+        child_y=window_height / 2 - player_nav_buttons_width / 2,
+        direction="v",
+        unit=unit,
     )
     p2 = create_child_window(
         root,
         nav_buttons=nav_buttons_p2,
-        x_midpoint=window_width - player_nav_buttons_width / 2,
+        child_x=window_width - unit,
+        child_y=window_height / 2 - player_nav_buttons_width / 2,
+        direction="v",
+        unit=unit,
     )
+    middle_nav_buttons_width = len(nav_buttons_middle) * unit
     middle = create_child_window(
-        root, nav_buttons=nav_buttons_middle, x_midpoint=window_width / 2
+        root,
+        nav_buttons=nav_buttons_middle,
+        child_x=window_width / 2 - middle_nav_buttons_width / 2,
+        child_y=window_height - unit,
+        unit=unit,
     )
     ensure_itgmania_active(fail_ok=True)
     return [p1, p2, middle]
