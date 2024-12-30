@@ -3,6 +3,7 @@ from typing import *
 import dataclasses
 from time import sleep
 import re
+import signal
 import subprocess
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -26,8 +27,8 @@ def get_current_screen():
 
 use_game_buttons = False
 # use_game_buttons = True
-window_position_x = "0"
-window_position_y = "0"
+window_position_x = 0
+window_position_y = 0
 # hardcoded offset for desktop development
 window_position_x = 6
 window_position_y = 93
@@ -356,8 +357,19 @@ def show_or_hide_nav_windows():
 
 
 # quit on control-C
-# TODO: this doesn't actually work?
-root.bind("<Control-c>", exit)
+def ctrl_c_handler(*_unused):
+    root.destroy()
+    print("caught ^C")
+
+
+def check():
+    root.after(500, check)  #  time in ms.
+
+
+root.after(500, check)
+signal.signal(signal.SIGINT, ctrl_c_handler)
+# root.bind("<Control-c>", ctrl_c_handler)
+
 root.after(250, ensure_itgmania_active)
 root.after(nav_window_check_interval_ms, show_or_hide_nav_windows)
 root.mainloop()

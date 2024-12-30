@@ -12,7 +12,9 @@
   - [ ] maybe also add a restart button for during gameplay?
 - [ ] favorite button
 - [ ] maybe hide mouse cursor?
-- [ ] add to ITG machine and make it auto start
+- [x] add to ITG machine and make it auto start
+- [x] make it properly quit on Ctrl-C
+- [ ] change the button layout to vertical on the sides instead (more ergonomic)
 
 
 # itgmania Simply-Love ScreenSwitcher.lua module
