@@ -225,7 +225,7 @@ else:
 
     p2_left   = "KP_Divide"
     p2_right  = "KP_Multiply"
-    p2_up     = "KP_Minus"
+    p2_up     = "KP_Subtract"
     p2_down   = "KP_Add"
     p2_start  = "KP_Enter"
     p2_select = "KP_0"
